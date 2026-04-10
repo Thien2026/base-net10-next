@@ -43,6 +43,12 @@ namespace SourceBase.Application.DTOs
         public int DisplayOrder { get; set; }
         public List<string>? SelectOptions { get; set; }
         public string? Placeholder { get; set; }
+        public string? Icon { get; set; }
+        public string? ValidationRegex { get; set; }
+        public string? ValidationMessage { get; set; }
+        public string? DependsOnField { get; set; }
+        public Dictionary<string, List<string>>? ConditionalOptions { get; set; }
+        public string? ReferenceSource { get; set; }
         public Guid? GroupId { get; set; }
         public string? GroupName { get; set; } // Hỗ trợ hiển thị tên nhóm nhanh
         public bool IsActive { get; set; }
@@ -59,6 +65,12 @@ namespace SourceBase.Application.DTOs
         public int DisplayOrder { get; set; } = 0;
         public List<string>? SelectOptions { get; set; }
         public string? Placeholder { get; set; }
+        public string? Icon { get; set; }
+        public string? ValidationRegex { get; set; }
+        public string? ValidationMessage { get; set; }
+        public string? DependsOnField { get; set; }
+        public Dictionary<string, List<string>>? ConditionalOptions { get; set; }
+        public string? ReferenceSource { get; set; }
         public Guid? GroupId { get; set; }
         public bool IsActive { get; set; } = true;
     }
@@ -71,6 +83,12 @@ namespace SourceBase.Application.DTOs
         public int DisplayOrder { get; set; }
         public List<string>? SelectOptions { get; set; }
         public string? Placeholder { get; set; }
+        public string? Icon { get; set; }
+        public string? ValidationRegex { get; set; }
+        public string? ValidationMessage { get; set; }
+        public string? DependsOnField { get; set; }
+        public Dictionary<string, List<string>>? ConditionalOptions { get; set; }
+        public string? ReferenceSource { get; set; }
         public Guid? GroupId { get; set; }
         public bool IsActive { get; set; }
     }
@@ -138,6 +156,12 @@ namespace SourceBase.Application.DTOs
         public int DisplayOrder { get; set; }
         public List<string>? SelectOptions { get; set; }
         public string? Placeholder { get; set; }
+        public string? Icon { get; set; }
+        public string? ValidationRegex { get; set; }
+        public string? ValidationMessage { get; set; }
+        public string? DependsOnField { get; set; }
+        public Dictionary<string, List<string>>? ConditionalOptions { get; set; }
+        public string? ReferenceSource { get; set; }
         public Guid? GroupId { get; set; }
         public string? GroupName { get; set; }
         public string? Value { get; set; }

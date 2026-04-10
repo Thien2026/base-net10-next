@@ -6,6 +6,7 @@ import { Moon, Sun, Menu, X, LayoutDashboard, Users, FileText, Settings, LogOut,
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { useNavigationContext } from '@/contexts/NavigationContext';
 
 export default function AdminLayoutWrapper({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -19,6 +20,7 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
     const { theme, setTheme } = useTheme();
     const pathname = usePathname();
     const router = useRouter();
+    const { checkNavigation } = useNavigationContext();
 
     useEffect(() => {
         setMounted(true);
@@ -94,7 +96,7 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
 
     const navGroups = [
         {
-            label: null, // no label for primary item
+            label: null,
             items: [
                 { name: 'Bảng Điều Khiển', href: '/admin', icon: LayoutDashboard },
             ]
@@ -107,14 +109,24 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
             ]
         },
         {
-            label: 'Quản Trị',
+            label: 'Người Dùng',
+            items: [
+                { name: 'Tài Khoản', href: '/admin/users', icon: Users },
+                { name: 'Nhóm Thông Tin', href: '/admin/profile-groups', icon: Folder },
+                { name: 'Trường Thông Tin', href: '/admin/profile-fields', icon: ClipboardList },
+            ]
+        },
+        {
+            label: 'Hệ Thống',
+            items: [
+                { name: 'Nhật Ký Hệ Thống', href: '/admin/audit-logs', icon: Activity },
+                { name: 'Cài Đặt', href: '/admin/settings', icon: Settings },
+            ]
+        },
+        {
+            label: 'Tài Khoản',
             items: [
                 { name: 'Hồ Sơ Cá Nhân', href: '/admin/profile', icon: UserCircle },
-                { name: 'Người Dùng', href: '/admin/users', icon: Users },
-                { name: 'Nhóm Thông Tin', href: '/admin/profile-groups', icon: Folder },
-                { name: 'Thông Tin User', href: '/admin/profile-fields', icon: ClipboardList },
-                { name: 'Nhật Ký Hệ Thống', href: '/admin/audit-logs', icon: Activity },
-                { name: 'Cài Đặt', href: '#', icon: Settings },
             ]
         },
     ];
@@ -168,12 +180,12 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
                     {navGroups.map((group, gIdx) => (
                         <div key={gIdx}>
                             {group.label && !isCollapsed && (
-                                <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 select-none">
-                                    {group.label}
-                                </p>
-                            )}
-                            {group.label && !isCollapsed && gIdx > 0 && (
-                                <div className="h-px bg-slate-200/60 dark:bg-white/5 mb-2 mx-1" />
+                                <div className="mt-4 mb-1">
+                                    <div className="h-px bg-slate-200/60 dark:bg-white/5 mb-2 mx-1" />
+                                    <p className="px-3 mb-1 text-[10px] font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 select-none">
+                                        {group.label}
+                                    </p>
+                                </div>
                             )}
                             <div className="space-y-0.5">
                                 {group.items.map((item) => {
@@ -182,6 +194,12 @@ export default function AdminLayoutWrapper({ children }: { children: React.React
                                         <Link
                                             key={item.name}
                                             href={item.href}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                checkNavigation(() => {
+                                                    router.push(item.href);
+                                                });
+                                            }}
                                             className={`flex items-center ${isCollapsed ? 'justify-center' : 'justify-start'} px-3 py-2.5 rounded-xl transition-all duration-200 group ${isActive
                                                 ? 'bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-medium'
                                                 : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'

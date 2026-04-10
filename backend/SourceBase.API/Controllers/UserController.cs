@@ -57,6 +57,42 @@ namespace SourceBase.API.Controllers
             });
         }
 
+        [HttpGet("lookup")]
+        public async Task<ActionResult<IEnumerable<object>>> Lookup([FromQuery] string? q)
+        {
+            var query = _userManager.Users.Where(u => u.IsActive);
+            if (!string.IsNullOrEmpty(q))
+            {
+                query = query.Where(u => u.FullName.Contains(q) || u.UserName.Contains(q) || u.Email.Contains(q));
+            }
+
+            var results = await query.Take(20).Select(u => new 
+            {
+                id = u.Id,
+                label = !string.IsNullOrEmpty(u.FullName) ? $"{u.FullName} ({u.Email})" : u.UserName
+            }).ToListAsync();
+
+            return Ok(results);
+        }
+
+        [HttpGet("roles/lookup")]
+        public async Task<ActionResult<IEnumerable<object>>> LookupRoles([FromQuery] string? q)
+        {
+            var query = _roleManager.Roles.AsQueryable();
+            if (!string.IsNullOrEmpty(q))
+            {
+                query = query.Where(r => r.Name != null && r.Name.Contains(q));
+            }
+
+            var results = await query.Take(20).Select(r => new 
+            {
+                id = r.Id,
+                label = r.Name
+            }).ToListAsync();
+
+            return Ok(results);
+        }
+
         [HttpGet]
         public async Task<ActionResult<PagedResponse<IEnumerable<UserDto>>>> GetUsers(
             [FromQuery] int pageNumber = 1, 

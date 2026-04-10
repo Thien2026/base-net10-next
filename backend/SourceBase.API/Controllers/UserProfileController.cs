@@ -70,6 +70,9 @@ namespace SourceBase.API.Controllers
                     DisplayOrder = field.DisplayOrder,
                     SelectOptions = options,
                     Placeholder = field.Placeholder,
+                    Icon = field.Icon,
+                    ValidationRegex = field.ValidationRegex,
+                    ValidationMessage = field.ValidationMessage,
                     GroupId = field.GroupId,
                     GroupName = field.Group?.Name,
                     Value = myValues.TryGetValue(field.Id, out var val) ? val : null
@@ -126,6 +129,13 @@ namespace SourceBase.API.Controllers
                         {
                             try { options = JsonSerializer.Deserialize<List<string>>(field.SelectOptions); } catch { }
                         }
+
+                        Dictionary<string, List<string>>? condOptions = null;
+                        if (!string.IsNullOrEmpty(field.ConditionalOptions))
+                        {
+                            try { condOptions = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(field.ConditionalOptions); } catch { }
+                        }
+
                         return new ProfileFieldWithValueDto
                         {
                             FieldDefinitionId = field.Id,
@@ -136,6 +146,12 @@ namespace SourceBase.API.Controllers
                             DisplayOrder = field.DisplayOrder,
                             SelectOptions = options,
                             Placeholder = field.Placeholder,
+                            Icon = field.Icon,
+                            ValidationRegex = field.ValidationRegex,
+                            ValidationMessage = field.ValidationMessage,
+                            ReferenceSource = field.ReferenceSource,
+                            DependsOnField = field.DependsOnField,
+                            ConditionalOptions = condOptions,
                             GroupId = field.GroupId,
                             GroupName = field.Group?.Name,
                             Value = myValues.TryGetValue(field.Id, out var val) ? val : null
@@ -181,6 +197,12 @@ namespace SourceBase.API.Controllers
                     try { options = JsonSerializer.Deserialize<List<string>>(field.SelectOptions); } catch { }
                 }
 
+                Dictionary<string, List<string>>? condOptions = null;
+                if (!string.IsNullOrEmpty(field.ConditionalOptions))
+                {
+                    try { condOptions = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(field.ConditionalOptions); } catch { }
+                }
+
                 return new ProfileFieldWithValueDto
                 {
                     FieldDefinitionId = field.Id,
@@ -191,6 +213,12 @@ namespace SourceBase.API.Controllers
                     DisplayOrder = field.DisplayOrder,
                     SelectOptions = options,
                     Placeholder = field.Placeholder,
+                    Icon = field.Icon,
+                    ValidationRegex = field.ValidationRegex,
+                    ValidationMessage = field.ValidationMessage,
+                    ReferenceSource = field.ReferenceSource,
+                    DependsOnField = field.DependsOnField,
+                    ConditionalOptions = condOptions,
                     GroupId = field.GroupId,
                     GroupName = field.Group?.Name,
                     Value = userValues.TryGetValue(field.Id, out var val) ? val : null
@@ -241,11 +269,36 @@ namespace SourceBase.API.Controllers
                 }
             }
 
-            // Upsert values
+            // Upsert values and validate Regex
             foreach (var input in dto.Fields)
             {
                 // Chỉ chấp nhận field còn active
                 if (!activeFieldIds.Contains(input.FieldDefinitionId)) continue;
+
+                // Validate Regex nếu có (chỉ validate nếu có nhập giá trị)
+                if (!string.IsNullOrWhiteSpace(input.Value))
+                {
+                    var fieldDef = await _context.UserProfileFieldDefinitions.FindAsync(input.FieldDefinitionId);
+                    if (fieldDef != null && !string.IsNullOrWhiteSpace(fieldDef.ValidationRegex))
+                    {
+                        try
+                        {
+                            if (!System.Text.RegularExpressions.Regex.IsMatch(input.Value, fieldDef.ValidationRegex))
+                            {
+                                var msg = string.IsNullOrWhiteSpace(fieldDef.ValidationMessage) 
+                                    ? $"Trường '{fieldDef.Label}' không đúng định dạng." 
+                                    : fieldDef.ValidationMessage;
+                                return BadRequest(new { Message = msg });
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // Nếu regex bị lỗi cú pháp, bỏ qua hoặc có thể return Error tùy design.
+                            // Ở đây ta có thể log lỗi, tạm thời return BadRequest
+                            return BadRequest(new { Message = $"Cấu hình Regex cho trường '{fieldDef.Label}' bị lỗi." });
+                        }
+                    }
+                }
 
                 var existing = await _context.UserProfileFieldValues
                     .FirstOrDefaultAsync(v => v.UserId == userId.Value && v.FieldDefinitionId == input.FieldDefinitionId);

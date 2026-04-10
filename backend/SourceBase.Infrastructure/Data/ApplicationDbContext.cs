@@ -16,6 +16,7 @@ namespace SourceBase.Infrastructure.Data
         public DbSet<UserProfileGroup> UserProfileGroups { get; set; }
         public DbSet<UserProfileFieldDefinition> UserProfileFieldDefinitions { get; set; }
         public DbSet<UserProfileFieldValue> UserProfileFieldValues { get; set; }
+        public DbSet<SystemSetting> SystemSettings { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -96,6 +97,15 @@ namespace SourceBase.Infrastructure.Data
                     .WithMany()
                     .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // SystemSetting
+            builder.Entity<SystemSetting>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Key).IsUnique();
+                entity.Property(e => e.Key).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Value).HasMaxLength(2000);
             });
         }
     }

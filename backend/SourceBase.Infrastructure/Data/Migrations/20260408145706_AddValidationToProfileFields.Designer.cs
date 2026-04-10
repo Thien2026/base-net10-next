@@ -2,18 +2,21 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SourceBase.Infrastructure.Data;
 
 #nullable disable
 
-namespace SourceBase.Infrastructure.Migrations
+namespace SourceBase.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260408145706_AddValidationToProfileFields")]
+    partial class AddValidationToProfileFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -308,14 +311,8 @@ namespace SourceBase.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("ConditionalOptions")
-                        .HasColumnType("text");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("DependsOnField")
-                        .HasColumnType("text");
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("integer");
@@ -349,9 +346,6 @@ namespace SourceBase.Infrastructure.Migrations
                     b.Property<string>("Placeholder")
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
-
-                    b.Property<string>("ReferenceSource")
-                        .HasColumnType("text");
 
                     b.Property<string>("SelectOptions")
                         .HasMaxLength(2000)

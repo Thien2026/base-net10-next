@@ -25,3 +25,32 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Placeholder rõ hơn ở light mode */
+:root input::placeholder,
+:root textarea::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+:root select {
+  color: #374151;
+}
+
+:root select option[value=""] {
+  color: #6b7280;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+}
+
+.dark select {
+  color: #e5e7eb;
+}
+
+.dark select option[value=""] {
+  color: #9ca3af;
+}

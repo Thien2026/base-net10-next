@@ -74,6 +74,12 @@ namespace SourceBase.API.Controllers
                     ? JsonSerializer.Serialize(dto.SelectOptions)
                     : null,
                 Placeholder = dto.Placeholder,
+                Icon = dto.Icon,
+                ValidationRegex = dto.ValidationRegex,
+                ValidationMessage = dto.ValidationMessage,
+                DependsOnField = dto.DependsOnField,
+                ConditionalOptions = dto.ConditionalOptions != null ? JsonSerializer.Serialize(dto.ConditionalOptions) : null,
+                ReferenceSource = dto.ReferenceSource,
                 GroupId = dto.GroupId,
                 IsActive = dto.IsActive
             };
@@ -102,6 +108,12 @@ namespace SourceBase.API.Controllers
                 ? JsonSerializer.Serialize(dto.SelectOptions)
                 : null;
             field.Placeholder = dto.Placeholder;
+            field.Icon = dto.Icon;
+            field.ValidationRegex = dto.ValidationRegex;
+            field.ValidationMessage = dto.ValidationMessage;
+            field.DependsOnField = dto.DependsOnField;
+            field.ConditionalOptions = dto.ConditionalOptions != null ? JsonSerializer.Serialize(dto.ConditionalOptions) : null;
+            field.ReferenceSource = dto.ReferenceSource;
             field.GroupId = dto.GroupId;
             field.IsActive = dto.IsActive;
 
@@ -130,6 +142,12 @@ namespace SourceBase.API.Controllers
                 try { options = JsonSerializer.Deserialize<List<string>>(field.SelectOptions); } catch { }
             }
 
+            Dictionary<string, List<string>>? condOptions = null;
+            if (!string.IsNullOrEmpty(field.ConditionalOptions))
+            {
+                try { condOptions = JsonSerializer.Deserialize<Dictionary<string, List<string>>>(field.ConditionalOptions); } catch { }
+            }
+
             return new ProfileFieldDefinitionDto
             {
                 Id = field.Id,
@@ -140,6 +158,12 @@ namespace SourceBase.API.Controllers
                 DisplayOrder = field.DisplayOrder,
                 SelectOptions = options,
                 Placeholder = field.Placeholder,
+                Icon = field.Icon,
+                ValidationRegex = field.ValidationRegex,
+                ValidationMessage = field.ValidationMessage,
+                DependsOnField = field.DependsOnField,
+                ConditionalOptions = condOptions,
+                ReferenceSource = field.ReferenceSource,
                 GroupId = field.GroupId,
                 GroupName = field.Group?.Name,
                 IsActive = field.IsActive,
